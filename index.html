@@ -93,6 +93,30 @@
         .clicks-number:hover {
             background-color: #ffefef;
         }
+        .total-clicks-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .total-clicks-label {
+            font-size: 18px;
+            color: #555;
+            margin-right: 10px;
+        }
+        .total-clicks-number {
+            font-weight: bold;
+            color: #00c6ff;
+            font-size: 2em;
+            border: 2px solid #00c6ff;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.85);
+            transition: background-color 0.2s;
+        }
+        .total-clicks-number:hover {
+            background-color: #e0f7ff;
+        }
         footer {
             margin-top: 40px;
             color: #333;
@@ -127,6 +151,10 @@
             <span class="clicks-label">Number of clicks:</span>
             <span id="clickCount" class="clicks-number">0</span>
         </div>
+        <div class="total-clicks-container">
+            <span class="total-clicks-label">Total clicks:</span>
+            <span id="totalClickCount" class="total-clicks-number">0</span>
+        </div>
     </div>
     <footer>
         Made with <span class="made-with-love">❤</span> by Pepe
@@ -134,15 +162,18 @@
 
     <script>
         let clickCount = localStorage.getItem('clickCount') ? parseInt(localStorage.getItem('clickCount')) : 0;
+        let totalClickCount = localStorage.getItem('totalClickCount') ? parseInt(localStorage.getItem('totalClickCount')) : 0;
         const image = document.getElementById('clickableImage');
         const clickCountDisplay = document.getElementById('clickCount');
+        const totalClickCountDisplay = document.getElementById('totalClickCount');
 
         // Preload pop sound with increased volume and instant play
         const popSound = new Audio('https://www.soundjay.com/button/beep-07.wav');
         popSound.volume = 1.0;
 
-        // Display initial click count
+        // Display initial click count and total click count
         clickCountDisplay.textContent = clickCount;
+        totalClickCountDisplay.textContent = totalClickCount;
 
         // Function to play pop sound instantly
         function playPopSound() {
@@ -153,8 +184,11 @@
         // Handle single and multi-touch events with instant pop sound
         image.addEventListener('click', () => {
             clickCount++;
+            totalClickCount++;
             clickCountDisplay.textContent = clickCount;
+            totalClickCountDisplay.textContent = totalClickCount;
             localStorage.setItem('clickCount', clickCount);
+            localStorage.setItem('totalClickCount', totalClickCount);
             playPopSound();
             image.classList.add('animation-shake');
             setTimeout(() => image.classList.remove('animation-shake'), 500);
@@ -163,8 +197,11 @@
         image.addEventListener('touchstart', (e) => {
             const touches = e.touches.length;
             clickCount += touches;
+            totalClickCount += touches;
             clickCountDisplay.textContent = clickCount;
+            totalClickCountDisplay.textContent = totalClickCount;
             localStorage.setItem('clickCount', clickCount);
+            localStorage.setItem('totalClickCount', totalClickCount);
             for (let i = 0; i < touches; i++) {
                 playPopSound();
             }
