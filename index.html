@@ -55,13 +55,17 @@
     </div>
 
     <script>
-        let clickCount = 0;
+        let clickCount = localStorage.getItem('clickCount') ? parseInt(localStorage.getItem('clickCount')) : 0;
         const image = document.getElementById('clickableImage');
         const clickCountDisplay = document.getElementById('clickCount');
+
+        // Display initial click count
+        clickCountDisplay.textContent = clickCount;
 
         image.addEventListener('click', () => {
             clickCount++;
             clickCountDisplay.textContent = clickCount;
+            localStorage.setItem('clickCount', clickCount);
         });
     </script>
 </body>
