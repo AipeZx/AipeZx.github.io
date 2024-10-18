@@ -3,56 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Click Counter</title>
+    <title>Pop Poom</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            background: linear-gradient(135deg, #f5f5f5 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
             margin: 0;
+            overflow: hidden;
         }
         .container {
-            background-color: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
             text-align: center;
-            animation: fadeIn 1s ease-in-out;
+            animation: fadeIn 0.5s ease-in-out;
         }
         h1 {
             color: #333;
-            font-size: 2em;
-            margin-bottom: 20px;
+            font-size: 3em;
+            margin-bottom: 30px;
         }
         img {
-            width: 200px;
+            width: 300px;
             height: auto;
             cursor: pointer;
-            margin-top: 10px;
-            border-radius: 10px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+            border-radius: 15px;
+            transition: transform 0.1s, box-shadow 0.1s;
         }
         img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
         }
         p {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #555;
+            margin-top: 30px;
+            font-size: 22px;
+            color: #333;
         }
         span {
             font-weight: bold;
-            color: #ff6347;
-            font-size: 1.5em;
+            color: #e94e77;
+            font-size: 2em;
         }
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            img {
+                width: 200px;
+            }
+            p {
+                font-size: 18px;
+            }
+            span {
+                font-size: 1.5em;
+            }
+        }
+        .clicks-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .clicks-label {
+            font-size: 18px;
+            color: #555;
+            margin-right: 10px;
+        }
+        .clicks-number {
+            font-weight: bold;
+            color: #ff6347;
+            font-size: 2em;
+            border: 2px solid #ff6347;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.85);
+            transition: background-color 0.2s;
+        }
+        .clicks-number:hover {
+            background-color: #ffefef;
+        }
+        footer {
+            margin-top: 40px;
+            color: #333;
+            font-size: 14px;
+        }
+        .made-with-love {
+            color: #e94e77;
+        }
+        .animation-shake {
+            animation: shake 0.5s;
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
         }
     </style>
 </head>
@@ -60,30 +123,41 @@
     <div class="container">
         <h1>Pop Poom</h1>
         <img src="https://img5.pic.in.th/file/secure-sv1/1000020966.jpg" alt="Clickable Image" id="clickableImage">
-        <p>Number of clicks: <span id="clickCount">0</span></p>
+        <div class="clicks-container">
+            <span class="clicks-label">Number of clicks:</span>
+            <span id="clickCount" class="clicks-number">0</span>
+        </div>
     </div>
+    <footer>
+        Made with <span class="made-with-love">❤</span> by Pepe
+    </footer>
 
     <script>
         let clickCount = localStorage.getItem('clickCount') ? parseInt(localStorage.getItem('clickCount')) : 0;
         const image = document.getElementById('clickableImage');
         const clickCountDisplay = document.getElementById('clickCount');
 
-        // Preload pop sound with increased volume
-        function playPopSound() {
-            const popSound = new Audio('https://www.soundjay.com/button/beep-07.wav');
-            popSound.volume = 1.0; // เพิ่มความดังของเสียง
-            popSound.play();
-        }
+        // Preload pop sound with increased volume and instant play
+        const popSound = new Audio('https://www.soundjay.com/button/beep-07.wav');
+        popSound.volume = 1.0;
 
         // Display initial click count
         clickCountDisplay.textContent = clickCount;
 
-        // Handle single and multi-touch events with fast and loud pop sound
+        // Function to play pop sound instantly
+        function playPopSound() {
+            const popSoundInstance = popSound.cloneNode(true);
+            popSoundInstance.play();
+        }
+
+        // Handle single and multi-touch events with instant pop sound
         image.addEventListener('click', () => {
             clickCount++;
             clickCountDisplay.textContent = clickCount;
             localStorage.setItem('clickCount', clickCount);
             playPopSound();
+            image.classList.add('animation-shake');
+            setTimeout(() => image.classList.remove('animation-shake'), 500);
         });
 
         image.addEventListener('touchstart', (e) => {
@@ -94,6 +168,8 @@
             for (let i = 0; i < touches; i++) {
                 playPopSound();
             }
+            image.classList.add('animation-shake');
+            setTimeout(() => image.classList.remove('animation-shake'), 500);
         });
     </script>
 </body>
